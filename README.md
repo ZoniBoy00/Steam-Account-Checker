@@ -1,5 +1,3 @@
-You're absolutely right! The format shown in the README is outdated and incorrect. Let me correct that section with the proper format based on the JWT token format we've been working with:
-
 # Steam Account Validator & Ban Checker
 
 A Python tool that validates Steam accounts using session cookies and checks for VAC, Community, and Economy bans. It fetches core profile details and generates a professional HTML report with everything in one place.
@@ -261,4 +259,5 @@ python steam_checker.py
 open steam_account_report.html  # macOS
 xdg-open steam_account_report.html  # Linux
 start steam_account_report.html  # Windows
+
 ```
