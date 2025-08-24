@@ -1,3 +1,5 @@
+You're absolutely right! The format shown in the README is outdated and incorrect. Let me correct that section with the proper format based on the JWT token format we've been working with:
+
 # Steam Account Validator & Ban Checker
 
 A Python tool that validates Steam accounts using session cookies and checks for VAC, Community, and Economy bans. It fetches core profile details and generates a professional HTML report with everything in one place.
@@ -32,6 +34,7 @@ A Python tool that validates Steam accounts using session cookies and checks for
 * ✅ Checks **VAC**, **Community**, and **Economy** bans
 * ✅ Retrieves profile info (username, real name, Steam64, etc.)
 * ✅ Generates a **professional HTML report** with per-account details
+* ✅ **Profile links** in HTML report for easy access to Steam profiles
 * ✅ Built‑in **rate limiting** to avoid API throttling
 * ✅ **Comprehensive error handling** and clear console status
 
@@ -73,15 +76,19 @@ pip install -r requirements.txt
    File format:
 
    ```json
-   {
-     "tokens": [
-       "sessionid=SESSIONID_HERE; steamLoginSecure=STEAM_LOGIN_SECURE_HERE",
-       "sessionid=SESSIONID_HERE; steamLoginSecure=STEAM_LOGIN_SECURE_HERE",
-       "sessionid=SESSIONID_HERE; steamLoginSecure=STEAM_LOGIN_SECURE_HERE",
-       "sessionid=SESSIONID_HERE; steamLoginSecure=STEAM_LOGIN_SECURE_HERE",
-       "sessionid=SESSIONID_HERE; steamLoginSecure=STEAM_LOGIN_SECURE_HERE"
-     ]
-   }
+   [
+     "curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw",
+     "curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw"
+   ]
+   ```
+
+   Or if using traditional cookie format:
+   
+   ```json
+   [
+     "steamLoginSecure=curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw",
+     "steamLoginSecure=curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw"
+   ]
    ```
 
 3. **Set your API key in the script**
@@ -114,13 +121,13 @@ Run the checker:
 python steam_checker.py
 ```
 
-You’ll see live console status (validations, counts, and a final summary). When finished, open the generated report in your browser.
+You'll see live console status (validations, counts, and a final summary). When finished, open the generated report in your browser.
 
 ---
 
 ## Output
 
-* **`steam_account_report.html`** — a polished, self‑contained HTML report of all processed accounts
+* **`steam_account_report.html`** — a polished, self-contained HTML report of all processed accounts
 * **Console summary** — status per token plus totals
 
 ---
@@ -137,6 +144,7 @@ For each account, the report includes:
 * Ban counts and details (where available)
 * Account **creation date**
 * **Last online** time
+* **Profile link** - direct link to Steam profile for quick access
 
 ---
 
@@ -145,14 +153,15 @@ For each account, the report includes:
 1. **Cookie Validation** — Each cookie string is parsed and used to call Steam endpoints to confirm session validity.
 2. **Profile Fetch** — The script retrieves core profile details (e.g., persona name, real name, Steam64).
 3. **Ban Checks** — VAC, Community, and Economy ban statuses are queried via the Steam Web API.
-4. **Rate Limiting** — Requests are spaced using `DELAY_BETWEEN_REQUESTS` to respect Steam’s limits.
-5. **Report Generation** — Results are collated into a clean, professional HTML report.
+4. **Profile Links** — Each account includes a direct link to the Steam profile for easy access.
+5. **Rate Limiting** — Requests are spaced using `DELAY_BETWEEN_REQUESTS` to respect Steam's limits.
+6. **Report Generation** — Results are collated into a clean, professional HTML report.
 
 ---
 
 ## Rate Limiting
 
-* Steam Web API typically enforces **\~100 requests/hour** per key.
+* Steam Web API typically enforces **~100 requests/hour** per key.
 * The script automatically delays between calls using `DELAY_BETWEEN_REQUESTS`.
 * If you process many tokens, consider increasing the delay to reduce throttling risk.
 
@@ -181,10 +190,10 @@ The script aims to **fail gracefully** and continue processing other accounts:
 
 * **Invalid cookies**
 
-  * Confirm `tokens.json` strings match the required format (include both `sessionid` and `steamLoginSecure`).
+  * Confirm `tokens.json` strings match the required format (either JWT format starting with "curtain2181----" or traditional cookie format).
 * **API key issues**
 
-  * Double‑check `STEAM_API_KEY` in `steam_checker.py` and that your key is active.
+  * Double-check `STEAM_API_KEY` in `steam_checker.py` and that your key is active.
 * **Rate limit / Too many requests**
 
   * Increase `DELAY_BETWEEN_REQUESTS` and retry later.
@@ -193,7 +202,7 @@ The script aims to **fail gracefully** and continue processing other accounts:
   * Check console for exceptions; ensure `OUTPUT_FILE` path is writable.
 * **Network errors**
 
-  * Verify internet connectivity and that Steam APIs aren’t temporarily unavailable.
+  * Verify internet connectivity and that Steam APIs aren't temporarily unavailable.
 
 ---
 
@@ -205,8 +214,11 @@ A: Yes. The shown file is an example—add as many as you need (keeping rate lim
 **Q: Do I have to use cookies?**
 A: Yes. This tool validates sessions via cookies and complements that with Web API checks.
 
-**Q: Can I change the report’s look?**
-A: Absolutely—modify the HTML template/CSS section inside `steam_checker.py` (or the template file if used).
+**Q: Can I change the report's look?**
+A: Absolutely—modify the HTML template/CSS section inside `template.py`.
+
+**Q: What's the new Profile link feature?**
+A: Each account in the HTML report now includes a "View" link that opens the Steam profile directly in a new tab.
 
 ---
 
@@ -238,7 +250,7 @@ source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
 
 # 2) Configure
-# - Get API key: https://steamcommunity.com/dev/apikey
+# - Get API key: https://steamcommunity.com/dev/apikey  
 # - Put cookies in tokens.json (see README)
 # - Edit STEAM_API_KEY and paths in steam_checker.py
 
