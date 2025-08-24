@@ -1,0 +1,7 @@
+requests
+urllib3
+certifi
+chardet
+idna
+beautifulsoup4
+lxml
