@@ -250,5 +250,3 @@ open steam_account_report.html  # macOS
 xdg-open steam_account_report.html  # Linux
 start steam_account_report.html  # Windows
 ```
-
-If you’d like, share your `requirements.txt` or a snippet of `steam_checker.py`, and I can auto‑extract exact dependencies and config options into this README.
