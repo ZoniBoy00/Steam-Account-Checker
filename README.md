@@ -209,8 +209,8 @@ The script aims to **fail gracefully** and continue processing other accounts:
 **Q: Can I put more than five tokens in `tokens.json`?**
 A: Yes. The shown file is an example—add as many as you need (keeping rate limits in mind).
 
-**Q: Do I have to use cookies?**
-A: Yes. This tool validates sessions via cookies and complements that with Web API checks.
+**Q: Do I have to use JWT Tokens?**
+A: Yes. This tool validates sessions via JWT Tokenscookies and complements that with Web API checks.
 
 **Q: Can I change the report's look?**
 A: Absolutely—modify the HTML template/CSS section inside `template.py`.
@@ -261,3 +261,4 @@ xdg-open steam_account_report.html  # Linux
 start steam_account_report.html  # Windows
 
 ```
+
