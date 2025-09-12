@@ -1,264 +1,202 @@
-# Steam Account Validator & Ban Checker
+# Enhanced Steam Account Checker
 
-A Python tool that validates Steam accounts using session cookies and checks for VAC, Community, and Economy bans. It fetches core profile details and generates a professional HTML report with everything in one place.
-
----
-
-## Table of Contents
-
-* [Features](#features)
-* [Requirements](#requirements)
-* [Installation](#installation)
-* [Setup](#setup)
-* [Configuration](#configuration)
-* [Usage](#usage)
-* [Output](#output)
-* [Report Contents](#report-contents)
-* [How It Works](#how-it-works)
-* [Rate Limiting](#rate-limiting)
-* [Error Handling](#error-handling)
-* [Security & Privacy](#security--privacy)
-* [Troubleshooting](#troubleshooting)
-* [FAQ](#faq)
-* [Contributors](#contributors)
-* [License](#license)
-* [Buy Me A Coffee](#buy-me-a-coffee)
-
----
+A powerful Python tool for validating Steam session tokens, checking account status, and generating comprehensive reports with JWT token validation support.
 
 ## Features
 
-* ✅ Validates Steam session cookies
-* ✅ Checks **VAC**, **Community**, and **Economy** bans
-* ✅ Retrieves profile info (username, real name, Steam64, etc.)
-* ✅ Generates a **professional HTML report** with per-account details
-* ✅ **Profile links** in HTML report for easy access to Steam profiles
-* ✅ Built‑in **rate limiting** to avoid API throttling
-* ✅ **Comprehensive error handling** and clear console status
-
----
-
-## Requirements
-
-* **Python**: 3.6+
-* **Packages**: see `requirements.txt`
-
-> Typical dependencies for this kind of tool include `requests` and `jinja2` (for HTML templating). Always rely on the provided `requirements.txt`.
-
----
+- ✅ **JWT Token Validation** - Validates Steam JWT tokens and checks expiration
+- 🔍 **Multiple Token Formats** - Supports `username----JWT` and standard cookie formats
+- 📊 **Comprehensive Reports** - Generates detailed HTML reports with statistics
+- 🚫 **Ban Detection** - Checks VAC, Community, and Economy bans
+- 👤 **Profile Information** - Fetches user profiles and account details
+- 🔄 **Retry Logic** - Built-in retry mechanism for failed requests
+- 📝 **Logging** - Detailed logging for debugging and monitoring
+- ⚡ **Performance Optimized** - Connection pooling and efficient processing
 
 ## Installation
 
-```bash
-# Create/activate a virtual environment (recommended)
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# macOS / Linux
-source .venv/bin/activate
+### Prerequisites
 
-# Install dependencies
-pip install -r requirements.txt
-```
+- Python 3.7 or higher
+- Steam Web API Key ([Get one here](https://steamcommunity.com/dev/apikey))
 
----
+### Quick Setup
 
-## Setup
-
-1. **Get a Steam Web API Key**
-
-   * Visit: [https://steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey)
-   * Register your application to obtain a free API key.
-
-2. **Create `tokens.json` with your Steam session cookies**
-   File format:
-
-   ```json
-   [
-     "curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw",
-     "curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw"
-   ]
+1. **Clone or download this repository**
+   ```bash
+   git clone https://github.com/ZoniBoy00/Steam-Account-Checker
+   cd Steam-Account-Checker
    ```
 
-   Or if using traditional cookie format:
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure your Steam API Key**
    
-   ```json
-   [
-     "steamLoginSecure=curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw",
-     "steamLoginSecure=curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw"
-   ]
-   ```
-
-3. **Set your API key in the script**
-   Open `steam_checker.py` and update:
-
+   Open `steam_checker.py` and replace `YOUR_STEAM_API_KEY` with your actual Steam Web API key:
    ```python
-   STEAM_API_KEY = "YOUR_API_KEY_HERE"
+   STEAM_API_KEY = "your_actual_steam_api_key_here"
    ```
 
----
-
-## Configuration
-
-Edit the constants at the top of `steam_checker.py`:
-
-* `STEAM_API_KEY`: Your Steam Web API key
-* `INPUT_FILE`: Path to tokens file (default likely `tokens.json`)
-* `OUTPUT_FILE`: Path to the HTML report (e.g., `steam_account_report.html`)
-* `DELAY_BETWEEN_REQUESTS`: Delay in seconds between API calls
-
-> Tip: If you prefer environment variables, you can adapt the script to read `STEAM_API_KEY` from `os.environ`—but by default it reads from the constant.
-
----
+4. **Prepare your tokens file**
+   
+   Create a `tokens.json` file with your Steam tokens (see [Token Formats](#token-formats) below)
 
 ## Usage
 
-Run the checker:
+### Simple Usage
 
 ```bash
 python steam_checker.py
 ```
 
-You'll see live console status (validations, counts, and a final summary). When finished, open the generated report in your browser.
+The script will automatically:
+1. Validate your configuration and API key
+2. Read tokens from `tokens.json`
+3. Process each token with JWT validation
+4. Check account status and ban information
+5. Generate a detailed HTML report (`steam_account_report.html`)
+6. Display comprehensive summary statistics
 
----
+### Token Formats
+
+The tool supports multiple token formats in your `tokens.json` file:
+
+#### Format 1: Username----JWT Format (Recommended)
+```json
+[
+  "curtain2181----eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3IiwiYXVkIjpbImNsaWVudCIsIndlYiIsInJlbmV3IiwiZGVyaXZlIl0sImV4cCI6MTc1MjI2NDgyOCwibmJmIjoxNzI1NTQ5MzIwLCJpYXQiOjE3MzQxODkzMjAsImp0aSI6IjAwMDlfMjU4M0UyRThfODE2NDkiLCJvYXQiOjE3MzQxODkzMjAsInBlciI6MSwiaXBfc3ViamVjdCI6IjE4My4yNC4xNTUuMjIyIiwiaXBfY29uZmlybWVyIjoiMjIzLjEwNC43OC4xNTkifQ.lOcHgoEKfm1ryWtMvPNGJEn3TnPSIljtx6Kijuu-fCh9XvcHqADeg9w2F0eqqOgGbRSABMMmmkZwvsVsETuBw"
+]
+```
+
+#### Format 2: Cookie Format
+```json
+[
+  "steamLoginSecure=eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9...; sessionid=abc123"
+]
+```
+
+#### Format 3: Direct JWT
+```json
+[
+  "eyJhbGciOiJFRFJTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdGVhbSIsInN1YiI6Ijc2NTYxMTk5MDI0OTU1NTY3In0.signature"
+]
+```
+
+#### Format 4: Object Format
+```json
+{
+  "tokens": [
+    "token1",
+    "token2"
+  ]
+}
+```
+
+### Configuration Options
+
+You can modify these settings in `steam_checker.py`:
+
+```python
+STEAM_API_KEY = "YOUR_STEAM_API_KEY"      # Your Steam Web API key
+INPUT_FILE = "tokens.json"                # Input file path
+OUTPUT_FILE = "steam_account_report.html" # Output report path
+DELAY_BETWEEN_REQUESTS = 2                # Delay between requests (seconds)
+REQUEST_TIMEOUT = 10                      # Request timeout (seconds)
+MAX_RETRIES = 3                           # Maximum retry attempts
+```
 
 ## Output
 
-* **`steam_account_report.html`** — a polished, self-contained HTML report of all processed accounts
-* **Console summary** — status per token plus totals
+### Console Output
+The script provides real-time progress updates showing:
+- Configuration validation results
+- Token parsing and JWT validation status
+- Steam ID extraction and verification
+- Account validation and session testing
+- Ban status checking (VAC, Community, Economy)
+- Processing statistics and completion status
 
----
+### HTML Report
+A comprehensive HTML report is generated containing:
+- **Summary Statistics** - Overview of all accounts processed
+- **Detailed Account Table** - Individual account information including:
+  - Account status (Valid/Invalid/Expired)
+  - Steam ID and username
+  - Ban status (VAC, Community, Economy)
+  - Account creation and last online dates
+  - JWT validation results
+  - Token expiration dates
 
-## Report Contents
+### Log File
+Detailed logs are saved to `steam_checker.log` for debugging and monitoring.
 
-For each account, the report includes:
+## Understanding the Results
 
-* Account index / number
-* Status: **Valid**, **Invalid**, or **Error**
-* **Steam64 ID**
-* **Username** and **Real name** (if available)
-* Ban statuses: **VAC**, **Community**, **Economy**
-* Ban counts and details (where available)
-* Account **creation date**
-* **Last online** time
-* **Profile link** - direct link to Steam profile for quick access
+### Account Status
+- **Valid** - Token is valid and account is accessible
+- **Invalid** - Token is malformed or account is inaccessible  
+- **Expired** - JWT token has expired
+- **Session Invalid** - Token format is valid but session is not active
+- **Error** - An error occurred during processing
 
----
+### JWT Validation
+- **JWT Valid: Yes** - Token structure is valid and not expired
+- **JWT Valid: No** - Token is invalid or expired
+- **JWT Valid: N/A** - Token is not in JWT format
 
-## How It Works
-
-1. **Cookie Validation** — Each cookie string is parsed and used to call Steam endpoints to confirm session validity.
-2. **Profile Fetch** — The script retrieves core profile details (e.g., persona name, real name, Steam64).
-3. **Ban Checks** — VAC, Community, and Economy ban statuses are queried via the Steam Web API.
-4. **Profile Links** — Each account includes a direct link to the Steam profile for easy access.
-5. **Rate Limiting** — Requests are spaced using `DELAY_BETWEEN_REQUESTS` to respect Steam's limits.
-6. **Report Generation** — Results are collated into a clean, professional HTML report.
-
----
-
-## Rate Limiting
-
-* Steam Web API typically enforces **~100 requests/hour** per key.
-* The script automatically delays between calls using `DELAY_BETWEEN_REQUESTS`.
-* If you process many tokens, consider increasing the delay to reduce throttling risk.
-
----
-
-## Error Handling
-
-The script aims to **fail gracefully** and continue processing other accounts:
-
-* Invalid/expired cookies → marked **Invalid** with reason
-* API/network errors → marked **Error** with details in console
-* Missing fields → handled with defaults in the report
-
----
-
-## Security & Privacy
-
-* All data is processed **locally**.
-* Keep your `tokens.json` and API key **private**—do not commit them to version control.
-* Rotate session cookies and API keys if you suspect exposure.
-* Consider using a dedicated, limited-scope environment when running the tool.
-
----
+### Ban Status
+- **VAC Banned** - Valve Anti-Cheat ban status
+- **Community Banned** - Steam Community ban status
+- **Economy Banned** - Steam Market/Trading ban status
 
 ## Troubleshooting
 
-* **Invalid cookies**
+### Common Issues
 
-  * Confirm `tokens.json` strings match the required format (either JWT format starting with "curtain2181----" or traditional cookie format).
-* **API key issues**
+1. **"Please set your Steam API key"**
+   - Solution: Replace `YOUR_STEAM_API_KEY` with your actual Steam Web API key
 
-  * Double-check `STEAM_API_KEY` in `steam_checker.py` and that your key is active.
-* **Rate limit / Too many requests**
+2. **"No tokens found in tokens.json"**
+   - Solution: Ensure `tokens.json` exists and contains valid token data
 
-  * Increase `DELAY_BETWEEN_REQUESTS` and retry later.
-* **No report generated**
+3. **"HTTP 429" or rate limiting errors**
+   - Solution: Increase `DELAY_BETWEEN_REQUESTS` value
 
-  * Check console for exceptions; ensure `OUTPUT_FILE` path is writable.
-* **Network errors**
+4. **"JWT parsing error"**
+   - Solution: Verify token format is correct (should have 3 parts separated by dots)
 
-  * Verify internet connectivity and that Steam APIs aren't temporarily unavailable.
+5. **"Requirements check failed"**
+   - Solution: Ensure Python 3.7+, valid tokens.json, and configured API key
 
----
+### Getting Help
 
-## FAQ
+If you encounter issues:
+1. Check the console output for error messages
+2. Review the `steam_checker.log` file for detailed error information
+3. Verify your Steam API key is valid and active
+4. Ensure your tokens are in the correct format
 
-**Q: Can I put more than five tokens in `tokens.json`?**
-A: Yes. The shown file is an example—add as many as you need (keeping rate limits in mind).
+## Security Notes
 
-**Q: Do I have to use JWT Tokens?**
-A: Yes. This tool validates sessions via JWT Tokenscookies and complements that with Web API checks.
+- Keep your Steam API key secure and never share it publicly
+- The tool only reads token information and doesn't modify accounts
+- All network requests use HTTPS for security
+- Tokens are processed locally and not sent to external services
 
-**Q: Can I change the report's look?**
-A: Absolutely—modify the HTML template/CSS section inside `template.py`.
+## Performance Tips
 
-**Q: What's the new Profile link feature?**
-A: Each account in the HTML report now includes a "View" link that opens the Steam profile directly in a new tab.
-
----
-
-## Contributors
-
-* ZoniBoy00 (@ZoniBoy00)
-
-> Want to contribute? Open an issue or PR with proposed changes. Please avoid submitting secrets or real tokens in examples.
-
----
+- For large token lists, consider processing in smaller batches
+- Adjust `DELAY_BETWEEN_REQUESTS` based on your needs (lower = faster, higher = more stable)
+- The tool uses connection pooling for improved performance
+- Enable logging level adjustment for better performance monitoring
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/ZoniBoy00/Steam-Account-Checker/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
----
+## Disclaimer
 
-## Buy Me A Coffee
-[Donate](https://buymeacoffee.com/zoniboy00)
-
----
-
-## At a Glance (Copy/Paste Quickstart)
-
-```bash
-# 1) Install
-python -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\activate on Windows
-pip install -r requirements.txt
-
-# 2) Configure
-# - Get API key: https://steamcommunity.com/dev/apikey  
-# - Put cookies in tokens.json (see README)
-# - Edit STEAM_API_KEY and paths in steam_checker.py
-
-# 3) Run
-python steam_checker.py
-
-# 4) Open the report
-open steam_account_report.html  # macOS
-xdg-open steam_account_report.html  # Linux
-start steam_account_report.html  # Windows
-
-```
-
+This tool is for educational and legitimate account management purposes only. Users are responsible for complying with [Steam's Web API Terms of Use](https://steamcommunity.com/dev/apiterms) and applicable laws. The developers are not responsible for any misuse of this tool.

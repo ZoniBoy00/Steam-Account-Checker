@@ -7,6 +7,8 @@ def _status_class(status: str) -> str:
         return "status-valid"
     if status == "invalid":
         return "status-invalid"
+    if status == "expired":
+        return "status-expired"
     return "status-error"
 
 def _ban_class(value: str, kind: str) -> str:
@@ -17,6 +19,14 @@ def _ban_class(value: str, kind: str) -> str:
         return "ban-yes" if v not in ("none", "no_data", "error") else "ban-no"
     return ""
 
+def _jwt_class(value: str) -> str:
+    v = (value or "").strip().lower()
+    if v == "yes":
+        return "jwt-valid"
+    elif v == "no":
+        return "jwt-invalid"
+    return "jwt-na"
+
 def render_report(accounts, stats, *, title: str = "Steam Account Validation Report", generated_at: datetime | None = None) -> str:
     generated_at = generated_at or datetime.now()
 
@@ -26,6 +36,8 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
     total = int(stats.get("total", len(accounts)))
     valid = int(stats.get("valid", 0))
     invalid = int(stats.get("invalid", 0))
+    expired = int(stats.get("expired", 0))
+    jwt_valid = int(stats.get("jwt_valid", 0))
     vac_banned = int(stats.get("vac_banned", 0))
     community_banned = int(stats.get("community_banned", 0))
     economy_banned = int(stats.get("economy_banned", 0))
@@ -54,6 +66,8 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
                 <td>{esc(a.get('Account_Created', 'Never'))}</td>
                 <td>{esc(a.get('Last_Online', 'Never'))}</td>
                 <td>{esc(a.get('Expires', 'Unknown'))}</td>
+                <td class="{_jwt_class(a.get('JWT_Valid', 'N/A'))}">{esc(a.get('JWT_Valid', 'N/A'))}</td>
+                <td class="{_jwt_class(a.get('JWT_Expired', 'N/A'))}">{esc(a.get('JWT_Expired', 'N/A'))}</td>
                 <td>{profile_link}</td>
             </tr>
             """
@@ -75,7 +89,7 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
             color: #e0e0e0;
         }}
         .container {{
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background-color: #1e1e1e;
             padding: 25px;
@@ -101,8 +115,8 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
         }}
         .summary-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
         }}
         .summary-item {{
             background-color: #2a2a2a;
@@ -116,12 +130,12 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }}
         .summary-value {{
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
             color: #00e676;
         }}
         .summary-label {{
-            font-size: 14px;
+            font-size: 13px;
             color: #aaa;
         }}
         table {{
@@ -130,15 +144,17 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
             margin: 20px 0;
             overflow: hidden;
             border-radius: 10px;
+            font-size: 13px;
         }}
         th, td {{
-            padding: 12px 14px;
+            padding: 10px 8px;
             text-align: left;
         }}
         th {{
             background-color: #00bcd4;
             color: #fff;
             font-weight: bold;
+            font-size: 12px;
         }}
         tr:nth-child(even) {{
             background-color: #2a2a2a;
@@ -151,9 +167,13 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
         }}
         .status-valid {{ color: #00e676; font-weight: bold; }}
         .status-invalid {{ color: #ff5252; font-weight: bold; }}
+        .status-expired {{ color: #ff9800; font-weight: bold; }}
         .status-error {{ color: #ffc107; font-weight: bold; }}
         .ban-yes {{ color: #ff5252; font-weight: bold; }}
         .ban-no {{ color: #00e676; }}
+        .jwt-valid {{ color: #00e676; font-weight: bold; }}
+        .jwt-invalid {{ color: #ff5252; font-weight: bold; }}
+        .jwt-na {{ color: #9e9e9e; }}
         .account-number {{ font-weight: bold; color: #03a9f4; }}
         .header-section p {{ color: #bbb; margin: 5px 0; text-align:center; }}
     </style>
@@ -163,7 +183,7 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
         <div class="header-section">
             <h1>{esc(title)}</h1>
             <p>Generated on: {esc(generated_at.strftime('%Y-%m-%d %H:%M:%S'))}</p>
-            <p>Report contains information about Steam accounts and their ban status</p>
+            <p>Enhanced Steam account checker with JWT token validation</p>
         </div>
 
         <div class="summary">
@@ -172,6 +192,8 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
                 <div class="summary-item"><div class="summary-value">{total}</div><div class="summary-label">Total Accounts</div></div>
                 <div class="summary-item"><div class="summary-value">{valid}</div><div class="summary-label">Valid Accounts</div></div>
                 <div class="summary-item"><div class="summary-value">{invalid}</div><div class="summary-label">Invalid Accounts</div></div>
+                <div class="summary-item"><div class="summary-value">{expired}</div><div class="summary-label">Expired Tokens</div></div>
+                <div class="summary-item"><div class="summary-value">{jwt_valid}</div><div class="summary-label">Valid JWTs</div></div>
                 <div class="summary-item"><div class="summary-value">{vac_banned}</div><div class="summary-label">VAC Banned</div></div>
                 <div class="summary-item"><div class="summary-value">{community_banned}</div><div class="summary-label">Community Banned</div></div>
                 <div class="summary-item"><div class="summary-value">{economy_banned}</div><div class="summary-label">Economy Banned</div></div>
@@ -193,6 +215,8 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
                     <th>Created</th>
                     <th>Last Online</th>
                     <th>Expires</th>
+                    <th>JWT Valid</th>
+                    <th>JWT Expired</th>
                     <th>Profile</th>
                 </tr>
             </thead>

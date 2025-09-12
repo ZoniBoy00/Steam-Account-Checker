@@ -1,7 +1,2 @@
-requests
-urllib3
-certifi
-chardet
-idna
-beautifulsoup4
-lxml
+requests>=2.31.0
+PyJWT>=2.8.0
